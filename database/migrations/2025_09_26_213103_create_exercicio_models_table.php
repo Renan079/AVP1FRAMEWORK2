@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('exercicios', function (Blueprint $table) {
             $table->id();
             $table->string('name_activiry');
-            $table->time('duration');
+            $table->integer('duration');
             $table->integer('calories_burned');
             $table->date('date');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ExercicioModel;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ExercicioModelController extends Controller
 {
@@ -21,7 +23,8 @@ class ExercicioModelController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::all();
+        return view('exercicios.createExercicios', compact('users'));
     }
 
     /**
@@ -29,7 +32,22 @@ class ExercicioModelController extends Controller
      */
     public function store(Request $request)
     {
-        
+         $validatedData = $request->validate([
+            'type'            => 'required|string|max:255', // O nome da atividade (campo 'type' no form)
+            'duration'        => 'required|integer|min:1',  // Usa validação para formato TIME (HH:MM)
+            'calories_burned' => 'required|integer|min:1',
+            'date'            => 'required|date',
+        ]);
+
+        $exercicio = ExercicioModel::create([
+            'user_id'         => Auth::id(), // ID do usuário logado
+            'name_activiry'   => $validatedData['type'], // Mapeando o valor do form para a coluna correta
+            'duration'        => $validatedData['duration'],
+            'calories_burned' => $validatedData['calories_burned'],
+            'date'            => $validatedData['date'],
+        ]);
+
+        return redirect()->route('exercicios.index')->with('success', 'O exercício foi registrado com sucesso!');
     }
 
     /**
